@@ -1,8 +1,8 @@
-name: Docker Image build and push to GHCR
+name: Docker_Image_Push_GHCR
 
 on:
   workflow_run:
-    workflows: ["BuildTest"]
+    workflows: [CI_LocationLoveMatch]
     types:
       - completed
       
