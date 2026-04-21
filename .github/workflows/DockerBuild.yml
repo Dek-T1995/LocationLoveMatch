@@ -1,26 +1,11 @@
-name: Docker Image build and push
+name: Docker Image build and push to GHCR
 
 on:
-  pull_request: 
-    branches: [ "master" ]
-    paths-ignore:
-    - '.github/workflows/**'
-    - '**.puml'
-    - '.gitignore'
-    - '.dockerignore'
-    - '**.yml'
-    - 'README.md'
-  push:
-    branches: [ "master" ]
-    tags:
-    - 'v*.*.*'
-    paths-ignore: 
-    - '.github/workflows/**'
-    - '**.puml'
-    - '.gitignore'
-    - '.dockerignore'
-    - '**.yml'
-    - 'README.md'
+  workflow_run:
+    workflows: ["Build_Test"]
+    types:
+      - completed
+      
   workflow_dispatch: 
 
 env:
