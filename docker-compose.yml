@@ -1,0 +1,10 @@
+services:
+  openfreemapslovematch:
+    image: ${DOCKER_REGISTRY-}openfreemapslovematch
+    build:
+      context: OpenFreeMapsLoveMatch
+      dockerfile: Dockerfile
+    volumes:
+      - /c/Users/Tim/Documents/ICT AD Zuyd/Databases/LocationLoveMatch.db:/app/ContainerLocationLoveMatch.db
+    ports:
+      - "8000:8080"

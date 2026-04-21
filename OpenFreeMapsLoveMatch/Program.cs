@@ -17,8 +17,7 @@ namespace OpenFreeMapsLoveMatch
             builder.Services.AddOpenApi();
             builder.Services.AddSwaggerGen();
             builder.Services.AddHttpClient<LocationService>(); // Tim 12-04-2026 Hier wordt de LocationService toegevoegd voor de OpenFreeMaps API.
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                                options.UseSqlite("DefaultConnection"));
+            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
