@@ -1,0 +1,40 @@
+name: CI .NET - LocationLoveMatch
+
+on:
+  push:
+    branches:
+    - master
+    paths-ignore:
+    - '.github/workflows/**'
+    - '**.puml'
+    - '.gitignore'
+    - '.dockerignore'
+    - '**.yml'
+    - 'README.md'
+  pull_request:
+    branches:
+    - master
+    paths-ignore:
+    - '.github/workflows/**'
+    - '**.puml'
+    - 'README.md'
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+  
+    - name: Restore dependencies
+      run: dotnet restore OpenFreeMapsLoveMatch/OpenFreeMapsLoveMatch.csproj
+    - name: Build
+      run: dotnet build OpenFreeMapsLoveMatch/OpenFreeMapsLoveMatch.csproj --no-restore --configuration Release --verbosity minimal
+    - name: Test
+      shell: pwsh
+      run: dotnet test OpenFreeMapsLoveMatch.Tests/OpenFreeMapsLoveMatch.Tests.csproj --configuration Release --verbosity minimal
