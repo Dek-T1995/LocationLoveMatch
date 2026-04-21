@@ -1,4 +1,4 @@
-name: CI .NET - LocationLoveMatch
+name: CI_LocationLoveMatch
 
 on:
   push:
