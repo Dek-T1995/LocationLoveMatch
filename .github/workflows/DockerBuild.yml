@@ -1,0 +1,78 @@
+name: Docker Image build and push
+
+on:
+  pull_request: 
+    branches: [ "master" ]
+    paths-ignore:
+    - '.github/workflows/**'
+    - '**.puml'
+    - '.gitignore'
+    - '.dockerignore'
+    - '**.yml'
+    - 'README.md'
+  push:
+    branches: [ "master" ]
+    tags:
+    - 'v*.*.*'
+    paths-ignore: 
+    - '.github/workflows/**'
+    - '**.puml'
+    - '.gitignore'
+    - '.dockerignore'
+    - '**.yml'
+    - 'README.md'
+  workflow_dispatch: 
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: dek-t1995/LocationLoveMatch
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Chechout repository
+        uses: actions/checkout@v5
+
+      - name: Login to the container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+        
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v5
+        with:
+          context: OpenFreeMapsLoveMatch
+          file: OpenFreeMapsLoveMatch/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
